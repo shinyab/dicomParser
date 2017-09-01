@@ -1,4 +1,4 @@
-/*! dicom-parser - 1.7.5 - 2017-06-02 | (c) 2017 Chris Hafey | https://github.com/chafey/dicomParser */
+/*! dicom-parser - 1.7.5 - 2017-09-01 | (c) 2017 Chris Hafey | https://github.com/chafey/dicomParser */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -74,7 +74,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 47);
+/******/ 	return __webpack_require__(__webpack_require__.s = 48);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -92,8 +92,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 
-var base64 = __webpack_require__(52)
-var ieee754 = __webpack_require__(55)
+var base64 = __webpack_require__(53)
+var ieee754 = __webpack_require__(56)
 var isArray = __webpack_require__(32)
 
 exports.Buffer = Buffer
@@ -1872,7 +1872,7 @@ function isnan (val) {
   return val !== val // eslint-disable-line no-self-compare
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
 /* 1 */
@@ -1904,6 +1904,7 @@ function readTag(byteStream) {
   var elementNumber = byteStream.readUint16();
   var tag = 'x' + ('00000000' + (groupNumber + elementNumber).toString(16)).substr(-8);
 
+  console.log('Tag\'s Code : ' + tag);
   return tag;
 }
 
@@ -2099,9 +2100,57 @@ process.umask = function() { return 0; };
 
 /***/ }),
 /* 3 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 // a duplex stream is just a stream that is both readable and writable.
 // Since JS doesn't have multiple prototypal inheritance, this class
 // prototypally inherits from Readable, and then parasitically from
@@ -2111,6 +2160,10 @@ process.umask = function() { return 0; };
 
 /*<replacement>*/
 
+var processNextTick = __webpack_require__(15);
+/*</replacement>*/
+
+/*<replacement>*/
 var objectKeys = Object.keys || function (obj) {
   var keys = [];
   for (var key in obj) {
@@ -2122,12 +2175,8 @@ var objectKeys = Object.keys || function (obj) {
 module.exports = Duplex;
 
 /*<replacement>*/
-var processNextTick = __webpack_require__(21);
-/*</replacement>*/
-
-/*<replacement>*/
-var util = __webpack_require__(5);
-util.inherits = __webpack_require__(6);
+var util = __webpack_require__(6);
+util.inherits = __webpack_require__(7);
 /*</replacement>*/
 
 var Readable = __webpack_require__(37);
@@ -2172,6 +2221,34 @@ function onEndNT(self) {
   self.end();
 }
 
+Object.defineProperty(Duplex.prototype, 'destroyed', {
+  get: function () {
+    if (this._readableState === undefined || this._writableState === undefined) {
+      return false;
+    }
+    return this._readableState.destroyed && this._writableState.destroyed;
+  },
+  set: function (value) {
+    // we ignore the value if the stream
+    // has not been initialized yet
+    if (this._readableState === undefined || this._writableState === undefined) {
+      return;
+    }
+
+    // backward compatibility, the user is explicitly
+    // managing destroyed
+    this._readableState.destroyed = value;
+    this._writableState.destroyed = value;
+  }
+});
+
+Duplex.prototype._destroy = function (err, cb) {
+  this.push(null);
+  this.end();
+
+  processNextTick(cb, err);
+};
+
 function forEach(xs, f) {
   for (var i = 0, l = xs.length; i < l; i++) {
     f(xs[i], i);
@@ -2179,7 +2256,7 @@ function forEach(xs, f) {
 }
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2525,7 +2602,7 @@ var DataSet = function () {
 exports.default = DataSet;
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(Buffer) {// Copyright Joyent, Inc. and other Node contributors.
@@ -2639,7 +2716,7 @@ function objectToString(o) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports) {
 
 if (typeof Object.create === 'function') {
@@ -2668,33 +2745,6 @@ if (typeof Object.create === 'function') {
 
 
 /***/ }),
-/* 7 */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1,eval)("this");
-} catch(e) {
-	// This works if the window reference is available
-	if(typeof window === "object")
-		g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-
-/***/ }),
 /* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2702,7 +2752,7 @@ module.exports = g;
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 exports.readFixedString = readFixedString;
 /**
@@ -2722,28 +2772,29 @@ exports.readFixedString = readFixedString;
  * @access private
  */
 function readFixedString(byteArray, position, length) {
-  if (length < 0) {
-    throw 'dicomParser.readFixedString - length cannot be less than 0';
-  }
-
-  if (position + length > byteArray.length) {
-    throw 'dicomParser.readFixedString: attempt to read past end of buffer';
-  }
-
-  var result = '';
-  var byte;
-
-  for (var i = 0; i < length; i++) {
-    byte = byteArray[position + i];
-    if (byte === 0) {
-      position += length;
-
-      return result;
+    if (length < 0) {
+        throw 'dicomParser.readFixedString - length cannot be less than 0';
     }
-    result += String.fromCharCode(byte);
-  }
 
-  return result;
+    if (position + length > byteArray.length) {
+        throw 'dicomParser.readFixedString: attempt to read past end of buffer';
+    }
+
+    var result = '';
+    var byte;
+
+    for (var i = 0; i < length; i++) {
+        byte = byteArray[position + i];
+        if (byte === 0) {
+            position += length;
+
+            return result;
+        }
+        result += String.fromCharCode(byte);
+    }
+
+    console.log('readFixedString [' + result + ']');
+    return result;
 }
 
 /***/ }),
@@ -2931,7 +2982,7 @@ var _readDicomElementExplicit = __webpack_require__(11);
 
 var _readDicomElementExplicit2 = _interopRequireDefault(_readDicomElementExplicit);
 
-var _readDicomElementImplicit = __webpack_require__(18);
+var _readDicomElementImplicit = __webpack_require__(19);
 
 var _readDicomElementImplicit2 = _interopRequireDefault(_readDicomElementImplicit);
 
@@ -3013,7 +3064,7 @@ function parseDicomDataSetImplicit(dataSet, byteStream, maxPosition) {
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 exports.default = readDicomElementExplicit;
 
@@ -3025,7 +3076,7 @@ var _findAndSetUNElementLength = __webpack_require__(24);
 
 var _findAndSetUNElementLength2 = _interopRequireDefault(_findAndSetUNElementLength);
 
-var _findItemDelimitationItem = __webpack_require__(16);
+var _findItemDelimitationItem = __webpack_require__(17);
 
 var _findItemDelimitationItem2 = _interopRequireDefault(_findItemDelimitationItem);
 
@@ -3044,70 +3095,70 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 
 var getDataLengthSizeInBytesForVR = function getDataLengthSizeInBytesForVR(vr) {
-  if (vr === 'OB' || vr === 'OW' || vr === 'SQ' || vr === 'OF' || vr === 'UT' || vr === 'UN') {
-    return 4;
-  }
+    if (vr === 'OB' || vr === 'OW' || vr === 'SQ' || vr === 'OF' || vr === 'UT' || vr === 'UN') {
+        return 4;
+    }
 
-  return 2;
+    return 2;
 };
 
 function readDicomElementExplicit(byteStream, warnings, untilTag) {
-  if (byteStream === undefined) {
-    throw 'dicomParser.readDicomElementExplicit: missing required parameter \'byteStream\'';
-  }
-
-  var element = {
-    tag: (0, _readTag2.default)(byteStream),
-    vr: byteStream.readFixedString(2
-    // length set below based on VR
-    // dataOffset set below based on VR and size of length
-    ) };
-
-  var dataLengthSizeBytes = getDataLengthSizeInBytesForVR(element.vr);
-
-  if (dataLengthSizeBytes === 2) {
-    element.length = byteStream.readUint16();
-    element.dataOffset = byteStream.position;
-  } else {
-    byteStream.seek(2);
-    element.length = byteStream.readUint32();
-    element.dataOffset = byteStream.position;
-  }
-
-  if (element.length === 4294967295) {
-    element.hadUndefinedLength = true;
-  }
-
-  if (element.tag === untilTag) {
-    return element;
-  }
-
-  // if VR is SQ, parse the sequence items
-  if (element.vr === 'SQ') {
-    (0, _readSequenceElementExplicit2.default)(byteStream, element, warnings);
-
-    return element;
-  }
-
-  if (element.length === 4294967295) {
-    if (element.tag === 'x7fe00010') {
-      (0, _findEndOfEncapsulatedPixelData2.default)(byteStream, element, warnings);
-
-      return element;
-    } else if (element.vr === 'UN') {
-      (0, _findAndSetUNElementLength2.default)(byteStream, element);
-
-      return element;
+    if (byteStream === undefined) {
+        throw 'dicomParser.readDicomElementExplicit: missing required parameter \'byteStream\'';
     }
 
-    (0, _findItemDelimitationItem2.default)(byteStream, element);
+    var element = {
+        tag: (0, _readTag2.default)(byteStream),
+        vr: byteStream.readFixedString(2)
+        // length set below based on VR
+        // dataOffset set below based on VR and size of length
+    };
+
+    var dataLengthSizeBytes = getDataLengthSizeInBytesForVR(element.vr);
+
+    if (dataLengthSizeBytes === 2) {
+        element.length = byteStream.readUint16();
+        element.dataOffset = byteStream.position;
+    } else {
+        byteStream.seek(2);
+        element.length = byteStream.readUint32();
+        element.dataOffset = byteStream.position;
+    }
+
+    if (element.length === 4294967295) {
+        element.hadUndefinedLength = true;
+    }
+
+    if (element.tag === untilTag) {
+        return element;
+    }
+
+    // if VR is SQ, parse the sequence items
+    if (element.vr === 'SQ') {
+        (0, _readSequenceElementExplicit2.default)(byteStream, element, warnings);
+
+        return element;
+    }
+
+    if (element.length === 4294967295) {
+        if (element.tag === 'x7fe00010') {
+            (0, _findEndOfEncapsulatedPixelData2.default)(byteStream, element, warnings);
+
+            return element;
+        } else if (element.vr === 'UN') {
+            (0, _findAndSetUNElementLength2.default)(byteStream, element);
+
+            return element;
+        }
+
+        (0, _findItemDelimitationItem2.default)(byteStream, element);
+
+        return element;
+    }
+
+    byteStream.seek(element.length);
 
     return element;
-  }
-
-  byteStream.seek(element.length);
-
-  return element;
 }
 
 /***/ }),
@@ -3307,6 +3358,57 @@ exports.setTyped(TYPED_OK);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+
+if (!process.version ||
+    process.version.indexOf('v0.') === 0 ||
+    process.version.indexOf('v1.') === 0 && process.version.indexOf('v1.8.') !== 0) {
+  module.exports = nextTick;
+} else {
+  module.exports = process.nextTick;
+}
+
+function nextTick(fn, arg1, arg2, arg3) {
+  if (typeof fn !== 'function') {
+    throw new TypeError('"callback" argument must be a function');
+  }
+  var len = arguments.length;
+  var args, i;
+  switch (len) {
+  case 0:
+  case 1:
+    return process.nextTick(fn);
+  case 2:
+    return process.nextTick(function afterTickOne() {
+      fn.call(null, arg1);
+    });
+  case 3:
+    return process.nextTick(function afterTickTwo() {
+      fn.call(null, arg1, arg2);
+    });
+  case 4:
+    return process.nextTick(function afterTickThree() {
+      fn.call(null, arg1, arg2, arg3);
+    });
+  default:
+    args = new Array(len - 1);
+    i = 0;
+    while (i < args.length) {
+      args[i++] = arguments[i];
+    }
+    return process.nextTick(function afterTick() {
+      fn.apply(null, args);
+    });
+  }
+}
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 
 Object.defineProperty(exports, "__esModule", {
@@ -3330,7 +3432,7 @@ function alloc(byteArray, length) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3386,7 +3488,7 @@ function findItemDelimitationItemAndSetElementLength(byteStream, element) {
 }
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3566,7 +3668,7 @@ exports.default = {
 };
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3577,7 +3679,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = readDicomElementImplicit;
 
-var _findItemDelimitationItem = __webpack_require__(16);
+var _findItemDelimitationItem = __webpack_require__(17);
 
 var _findItemDelimitationItem2 = _interopRequireDefault(_findItemDelimitationItem);
 
@@ -3659,7 +3761,7 @@ function readDicomElementImplicit(byteStream, untilTag, vrCallback) {
 }
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3670,7 +3772,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = readEncapsulatedPixelDataFromFragments;
 
-var _alloc = __webpack_require__(15);
+var _alloc = __webpack_require__(16);
 
 var _alloc2 = _interopRequireDefault(_alloc);
 
@@ -3801,7 +3903,7 @@ function readEncapsulatedPixelDataFromFragments(dataSet, pixelDataElement, start
 }
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3889,61 +3991,71 @@ exports.isPrivateTag = isPrivateTag;
 exports.parsePN = parsePN;
 
 /***/ }),
-/* 21 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
-
-if (!process.version ||
-    process.version.indexOf('v0.') === 0 ||
-    process.version.indexOf('v1.') === 0 && process.version.indexOf('v1.8.') !== 0) {
-  module.exports = nextTick;
-} else {
-  module.exports = process.nextTick;
-}
-
-function nextTick(fn, arg1, arg2, arg3) {
-  if (typeof fn !== 'function') {
-    throw new TypeError('"callback" argument must be a function');
-  }
-  var len = arguments.length;
-  var args, i;
-  switch (len) {
-  case 0:
-  case 1:
-    return process.nextTick(fn);
-  case 2:
-    return process.nextTick(function afterTickOne() {
-      fn.call(null, arg1);
-    });
-  case 3:
-    return process.nextTick(function afterTickTwo() {
-      fn.call(null, arg1, arg2);
-    });
-  case 4:
-    return process.nextTick(function afterTickThree() {
-      fn.call(null, arg1, arg2, arg3);
-    });
-  default:
-    args = new Array(len - 1);
-    i = 0;
-    while (i < args.length) {
-      args[i++] = arguments[i];
-    }
-    return process.nextTick(function afterTick() {
-      fn.apply(null, args);
-    });
-  }
-}
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
-
-/***/ }),
 /* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(0)
+/* eslint-disable node/no-deprecated-api */
+var buffer = __webpack_require__(0)
+var Buffer = buffer.Buffer
+
+// alternative to using Object.keys for old browsers
+function copyProps (src, dst) {
+  for (var key in src) {
+    dst[key] = src[key]
+  }
+}
+if (Buffer.from && Buffer.alloc && Buffer.allocUnsafe && Buffer.allocUnsafeSlow) {
+  module.exports = buffer
+} else {
+  // Copy properties from require('buffer')
+  copyProps(buffer, exports)
+  exports.Buffer = SafeBuffer
+}
+
+function SafeBuffer (arg, encodingOrOffset, length) {
+  return Buffer(arg, encodingOrOffset, length)
+}
+
+// Copy static methods from Buffer
+copyProps(Buffer, SafeBuffer)
+
+SafeBuffer.from = function (arg, encodingOrOffset, length) {
+  if (typeof arg === 'number') {
+    throw new TypeError('Argument must not be a number')
+  }
+  return Buffer(arg, encodingOrOffset, length)
+}
+
+SafeBuffer.alloc = function (size, fill, encoding) {
+  if (typeof size !== 'number') {
+    throw new TypeError('Argument must be a number')
+  }
+  var buf = Buffer(size)
+  if (fill !== undefined) {
+    if (typeof encoding === 'string') {
+      buf.fill(fill, encoding)
+    } else {
+      buf.fill(fill)
+    }
+  } else {
+    buf.fill(0)
+  }
+  return buf
+}
+
+SafeBuffer.allocUnsafe = function (size) {
+  if (typeof size !== 'number') {
+    throw new TypeError('Argument must be a number')
+  }
+  return Buffer(size)
+}
+
+SafeBuffer.allocUnsafeSlow = function (size) {
+  if (typeof size !== 'number') {
+    throw new TypeError('Argument must be a number')
+  }
+  return buffer.SlowBuffer(size)
+}
 
 
 /***/ }),
@@ -4298,7 +4410,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = readEncapsulatedImageFrame;
 
-var _readEncapsulatedPixelDataFromFragments = __webpack_require__(19);
+var _readEncapsulatedPixelDataFromFragments = __webpack_require__(20);
 
 var _readEncapsulatedPixelDataFromFragments2 = _interopRequireDefault(_readEncapsulatedPixelDataFromFragments);
 
@@ -4411,7 +4523,7 @@ function readEncapsulatedImageFrame(dataSet, pixelDataElement, frameIndex, basic
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 exports.default = readPart10Header;
 
@@ -4419,11 +4531,11 @@ var _byteStream = __webpack_require__(9);
 
 var _byteStream2 = _interopRequireDefault(_byteStream);
 
-var _dataSet = __webpack_require__(4);
+var _dataSet = __webpack_require__(5);
 
 var _dataSet2 = _interopRequireDefault(_dataSet);
 
-var _littleEndianByteArrayParser = __webpack_require__(17);
+var _littleEndianByteArrayParser = __webpack_require__(18);
 
 var _littleEndianByteArrayParser2 = _interopRequireDefault(_littleEndianByteArrayParser);
 
@@ -4446,54 +4558,72 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 
 function readPart10Header(byteArray, options) {
-  if (byteArray === undefined) {
-    throw 'dicomParser.readPart10Header: missing required parameter \'byteArray\'';
-  }
-
-  var littleEndianByteStream = new _byteStream2.default(_littleEndianByteArrayParser2.default, byteArray);
-
-  function readPrefix() {
-    littleEndianByteStream.seek(128);
-    var prefix = littleEndianByteStream.readFixedString(4);
-
-    if (prefix !== 'DICM') {
-      throw 'dicomParser.readPart10Header: DICM prefix not found at location 132 - this is not a valid DICOM P10 file.';
-    }
-  }
-
-  // main function here
-  function readTheHeader() {
-    // Per the DICOM standard, the header is always encoded in Explicit VR Little Endian (see PS3.10, section 7.1)
-    // so use littleEndianByteStream throughout this method regardless of the transfer syntax
-    readPrefix();
-
-    var warnings = [];
-    var elements = {};
-
-    while (littleEndianByteStream.position < littleEndianByteStream.byteArray.length) {
-      var position = littleEndianByteStream.position;
-      var element = (0, _readDicomElementExplicit2.default)(littleEndianByteStream, warnings);
-
-      if (element.tag > 'x0002ffff') {
-        littleEndianByteStream.position = position;
-        break;
-      }
-      // Cache the littleEndianByteArrayParser for meta header elements, since the rest of the data set may be big endian
-      // and this parser will be needed later if the meta header values are to be read.
-      element.parser = _littleEndianByteArrayParser2.default;
-      elements[element.tag] = element;
+    if (byteArray === undefined) {
+        throw 'dicomParser.readPart10Header: missing required parameter \'byteArray\'';
     }
 
-    var metaHeaderDataSet = new _dataSet2.default(littleEndianByteStream.byteArrayParser, littleEndianByteStream.byteArray, elements);
+    var littleEndianByteStream = new _byteStream2.default(_littleEndianByteArrayParser2.default, byteArray);
 
-    metaHeaderDataSet.warnings = littleEndianByteStream.warnings;
-    metaHeaderDataSet.position = littleEndianByteStream.position;
+    function readPrefix() {
+        littleEndianByteStream.seek(128);
+        var prefix = littleEndianByteStream.readFixedString(4);
 
-    return metaHeaderDataSet;
-  }
+        if (prefix !== 'DICM') {
+            console.log('These byteArray are not DICOM data');
+            throw 'dicomParser.readPart10Header: DICM prefix not found at location 132 - this is not a valid DICOM P10 file.';
+        } else {
+            console.log('These byteArray are DICOM data.');
+        }
+    }
 
-  // This is where we actually start parsing
-  return readTheHeader();
+    // main function here
+    function readTheHeader() {
+        // Per the DICOM standard, the header is always encoded in Explicit VR Little Endian (see PS3.10, section 7.1)
+        // so use littleEndianByteStream throughout this method regardless of the transfer syntax
+
+        // checking whether data is DICOM or not
+        readPrefix();
+
+        var warnings = [];
+        var elements = {};
+
+        // parsing until littleEndianByteStream.position greater than length of byteArray
+        while (littleEndianByteStream.position < littleEndianByteStream.byteArray.length) {
+            var position = littleEndianByteStream.position;
+            var element = (0, _readDicomElementExplicit2.default)(littleEndianByteStream, warnings);
+
+            // (0002,0000)	UL	File Meta Information Group Length
+            // (0002,0001)	OB	File Meta Information Version
+            // (0002,0002)	UI	Media Storage SOP Class UID
+            // (0002,0003)	UI	Media Storage SOP Instance UID
+            // (0002,0010)	UI	Transfer Syntax UID
+            // (0002,0012)	UI	Implementation Class UID
+            // (0002,0013)	SH	Implementation Version Name
+            // (0002,0016)	AE	Source Application Entity Title
+            // (0002,0017)	AE	Sending Application Entity Title
+            // (0002,0018)	AE	Receiving Application Entity Title
+            // (0002,0100)	UI	Private Information Creator UID
+            // (0002,0102)	OB	Private Information
+            if (element.tag > 'x0002ffff') {
+                littleEndianByteStream.position = position;
+                break;
+            }
+            // Cache the littleEndianByteArrayParser for meta header elements, since the rest of the data set may be big endian
+            // and this parser will be needed later if the meta header values are to be read.
+            element.parser = _littleEndianByteArrayParser2.default;
+            elements[element.tag] = element;
+        }
+
+        var metaHeaderDataSet = new _dataSet2.default(littleEndianByteStream.byteArrayParser, littleEndianByteStream.byteArray, elements);
+
+        metaHeaderDataSet.warnings = littleEndianByteStream.warnings;
+        metaHeaderDataSet.position = littleEndianByteStream.position;
+
+        return metaHeaderDataSet;
+    }
+
+    // This is where we actually start parsing
+    return readTheHeader();
 }
 
 /***/ }),
@@ -4508,7 +4638,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = readSequenceItemsExplicit;
 
-var _dataSet = __webpack_require__(4);
+var _dataSet = __webpack_require__(5);
 
 var _dataSet2 = _interopRequireDefault(_dataSet);
 
@@ -4635,11 +4765,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = readSequenceItemsImplicit;
 
-var _dataSet = __webpack_require__(4);
+var _dataSet = __webpack_require__(5);
 
 var _dataSet2 = _interopRequireDefault(_dataSet);
 
-var _readDicomElementImplicit = __webpack_require__(18);
+var _readDicomElementImplicit = __webpack_require__(19);
 
 var _readDicomElementImplicit2 = _interopRequireDefault(_readDicomElementImplicit);
 
@@ -4769,7 +4899,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = explicitElementToString;
 
-var _util = __webpack_require__(20);
+var _util = __webpack_require__(21);
 
 var util = _interopRequireWildcard(_util);
 
@@ -5495,13 +5625,35 @@ module.exports = {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
+/* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-module.exports = Readable;
+
 
 /*<replacement>*/
-var processNextTick = __webpack_require__(21);
+
+var processNextTick = __webpack_require__(15);
 /*</replacement>*/
+
+module.exports = Readable;
 
 /*<replacement>*/
 var isArray = __webpack_require__(32);
@@ -5522,20 +5674,29 @@ var EElistenerCount = function (emitter, type) {
 /*</replacement>*/
 
 /*<replacement>*/
-var Stream = __webpack_require__(40);
+var Stream = __webpack_require__(41);
 /*</replacement>*/
 
+// TODO(bmeurer): Change this back to const once hole checks are
+// properly optimized away early in Ignition+TurboFan.
 /*<replacement>*/
 var Buffer = __webpack_require__(22).Buffer;
+var OurUint8Array = global.Uint8Array || function () {};
+function _uint8ArrayToBuffer(chunk) {
+  return Buffer.from(chunk);
+}
+function _isUint8Array(obj) {
+  return Buffer.isBuffer(obj) || obj instanceof OurUint8Array;
+}
 /*</replacement>*/
 
 /*<replacement>*/
-var util = __webpack_require__(5);
-util.inherits = __webpack_require__(6);
+var util = __webpack_require__(6);
+util.inherits = __webpack_require__(7);
 /*</replacement>*/
 
 /*<replacement>*/
-var debugUtil = __webpack_require__(73);
+var debugUtil = __webpack_require__(74);
 var debug = void 0;
 if (debugUtil && debugUtil.debuglog) {
   debug = debugUtil.debuglog('stream');
@@ -5544,7 +5705,8 @@ if (debugUtil && debugUtil.debuglog) {
 }
 /*</replacement>*/
 
-var BufferList = __webpack_require__(64);
+var BufferList = __webpack_require__(65);
+var destroyImpl = __webpack_require__(40);
 var StringDecoder;
 
 util.inherits(Readable, Stream);
@@ -5566,7 +5728,7 @@ function prependListener(emitter, event, fn) {
 }
 
 function ReadableState(options, stream) {
-  Duplex = Duplex || __webpack_require__(3);
+  Duplex = Duplex || __webpack_require__(4);
 
   options = options || {};
 
@@ -5583,7 +5745,7 @@ function ReadableState(options, stream) {
   this.highWaterMark = hwm || hwm === 0 ? hwm : defaultHwm;
 
   // cast to ints.
-  this.highWaterMark = ~~this.highWaterMark;
+  this.highWaterMark = Math.floor(this.highWaterMark);
 
   // A linked list is used to store data chunks instead of an array because the
   // linked list can remove elements from the beginning faster than
@@ -5597,10 +5759,10 @@ function ReadableState(options, stream) {
   this.endEmitted = false;
   this.reading = false;
 
-  // a flag to be able to tell if the onwrite cb is called immediately,
-  // or on a later tick.  We set this to true at first, because any
-  // actions that shouldn't happen until "later" should generally also
-  // not happen before the first write call.
+  // a flag to be able to tell if the event 'readable'/'data' is emitted
+  // immediately, or on a later tick.  We set this to true at first, because
+  // any actions that shouldn't happen until "later" should generally also
+  // not happen before the first read call.
   this.sync = true;
 
   // whenever we return null, then we set a flag to say
@@ -5610,14 +5772,13 @@ function ReadableState(options, stream) {
   this.readableListening = false;
   this.resumeScheduled = false;
 
+  // has it been destroyed
+  this.destroyed = false;
+
   // Crypto is kind of old and crusty.  Historically, its default string
   // encoding is 'binary' so we have to make this configurable.
   // Everything else in the universe uses 'utf8', though.
   this.defaultEncoding = options.defaultEncoding || 'utf8';
-
-  // when piping, we only care about 'readable' events that happen
-  // after read()ing all the bytes and not getting any pushback.
-  this.ranOut = false;
 
   // the number of writers that are awaiting a drain event in .pipe()s
   this.awaitDrain = 0;
@@ -5635,7 +5796,7 @@ function ReadableState(options, stream) {
 }
 
 function Readable(options) {
-  Duplex = Duplex || __webpack_require__(3);
+  Duplex = Duplex || __webpack_require__(4);
 
   if (!(this instanceof Readable)) return new Readable(options);
 
@@ -5644,10 +5805,41 @@ function Readable(options) {
   // legacy
   this.readable = true;
 
-  if (options && typeof options.read === 'function') this._read = options.read;
+  if (options) {
+    if (typeof options.read === 'function') this._read = options.read;
+
+    if (typeof options.destroy === 'function') this._destroy = options.destroy;
+  }
 
   Stream.call(this);
 }
+
+Object.defineProperty(Readable.prototype, 'destroyed', {
+  get: function () {
+    if (this._readableState === undefined) {
+      return false;
+    }
+    return this._readableState.destroyed;
+  },
+  set: function (value) {
+    // we ignore the value if the stream
+    // has not been initialized yet
+    if (!this._readableState) {
+      return;
+    }
+
+    // backward compatibility, the user is explicitly
+    // managing destroyed
+    this._readableState.destroyed = value;
+  }
+});
+
+Readable.prototype.destroy = destroyImpl.destroy;
+Readable.prototype._undestroy = destroyImpl.undestroy;
+Readable.prototype._destroy = function (err, cb) {
+  this.push(null);
+  cb(err);
+};
 
 // Manually shove something into the read() buffer.
 // This returns true if the highWaterMark has not been hit yet,
@@ -5655,74 +5847,85 @@ function Readable(options) {
 // write() some more.
 Readable.prototype.push = function (chunk, encoding) {
   var state = this._readableState;
+  var skipChunkCheck;
 
-  if (!state.objectMode && typeof chunk === 'string') {
-    encoding = encoding || state.defaultEncoding;
-    if (encoding !== state.encoding) {
-      chunk = Buffer.from(chunk, encoding);
-      encoding = '';
+  if (!state.objectMode) {
+    if (typeof chunk === 'string') {
+      encoding = encoding || state.defaultEncoding;
+      if (encoding !== state.encoding) {
+        chunk = Buffer.from(chunk, encoding);
+        encoding = '';
+      }
+      skipChunkCheck = true;
     }
+  } else {
+    skipChunkCheck = true;
   }
 
-  return readableAddChunk(this, state, chunk, encoding, false);
+  return readableAddChunk(this, chunk, encoding, false, skipChunkCheck);
 };
 
 // Unshift should *always* be something directly out of read()
 Readable.prototype.unshift = function (chunk) {
-  var state = this._readableState;
-  return readableAddChunk(this, state, chunk, '', true);
+  return readableAddChunk(this, chunk, null, true, false);
 };
 
-Readable.prototype.isPaused = function () {
-  return this._readableState.flowing === false;
-};
-
-function readableAddChunk(stream, state, chunk, encoding, addToFront) {
-  var er = chunkInvalid(state, chunk);
-  if (er) {
-    stream.emit('error', er);
-  } else if (chunk === null) {
+function readableAddChunk(stream, chunk, encoding, addToFront, skipChunkCheck) {
+  var state = stream._readableState;
+  if (chunk === null) {
     state.reading = false;
     onEofChunk(stream, state);
-  } else if (state.objectMode || chunk && chunk.length > 0) {
-    if (state.ended && !addToFront) {
-      var e = new Error('stream.push() after EOF');
-      stream.emit('error', e);
-    } else if (state.endEmitted && addToFront) {
-      var _e = new Error('stream.unshift() after end event');
-      stream.emit('error', _e);
-    } else {
-      var skipAdd;
-      if (state.decoder && !addToFront && !encoding) {
-        chunk = state.decoder.write(chunk);
-        skipAdd = !state.objectMode && chunk.length === 0;
+  } else {
+    var er;
+    if (!skipChunkCheck) er = chunkInvalid(state, chunk);
+    if (er) {
+      stream.emit('error', er);
+    } else if (state.objectMode || chunk && chunk.length > 0) {
+      if (typeof chunk !== 'string' && !state.objectMode && Object.getPrototypeOf(chunk) !== Buffer.prototype) {
+        chunk = _uint8ArrayToBuffer(chunk);
       }
 
-      if (!addToFront) state.reading = false;
-
-      // Don't add to the buffer if we've decoded to an empty string chunk and
-      // we're not in object mode
-      if (!skipAdd) {
-        // if we want the data now, just emit it.
-        if (state.flowing && state.length === 0 && !state.sync) {
-          stream.emit('data', chunk);
-          stream.read(0);
+      if (addToFront) {
+        if (state.endEmitted) stream.emit('error', new Error('stream.unshift() after end event'));else addChunk(stream, state, chunk, true);
+      } else if (state.ended) {
+        stream.emit('error', new Error('stream.push() after EOF'));
+      } else {
+        state.reading = false;
+        if (state.decoder && !encoding) {
+          chunk = state.decoder.write(chunk);
+          if (state.objectMode || chunk.length !== 0) addChunk(stream, state, chunk, false);else maybeReadMore(stream, state);
         } else {
-          // update the buffer info.
-          state.length += state.objectMode ? 1 : chunk.length;
-          if (addToFront) state.buffer.unshift(chunk);else state.buffer.push(chunk);
-
-          if (state.needReadable) emitReadable(stream);
+          addChunk(stream, state, chunk, false);
         }
       }
-
-      maybeReadMore(stream, state);
+    } else if (!addToFront) {
+      state.reading = false;
     }
-  } else if (!addToFront) {
-    state.reading = false;
   }
 
   return needMoreData(state);
+}
+
+function addChunk(stream, state, chunk, addToFront) {
+  if (state.flowing && state.length === 0 && !state.sync) {
+    stream.emit('data', chunk);
+    stream.read(0);
+  } else {
+    // update the buffer info.
+    state.length += state.objectMode ? 1 : chunk.length;
+    if (addToFront) state.buffer.unshift(chunk);else state.buffer.push(chunk);
+
+    if (state.needReadable) emitReadable(stream);
+  }
+  maybeReadMore(stream, state);
+}
+
+function chunkInvalid(state, chunk) {
+  var er;
+  if (!_isUint8Array(chunk) && typeof chunk !== 'string' && chunk !== undefined && !state.objectMode) {
+    er = new TypeError('Invalid non-string/buffer chunk');
+  }
+  return er;
 }
 
 // if it's past the high water mark, we can push in some more.
@@ -5735,6 +5938,10 @@ function readableAddChunk(stream, state, chunk, encoding, addToFront) {
 function needMoreData(state) {
   return !state.ended && (state.needReadable || state.length < state.highWaterMark || state.length === 0);
 }
+
+Readable.prototype.isPaused = function () {
+  return this._readableState.flowing === false;
+};
 
 // backwards compatibility.
 Readable.prototype.setEncoding = function (enc) {
@@ -5884,14 +6091,6 @@ Readable.prototype.read = function (n) {
   return ret;
 };
 
-function chunkInvalid(state, chunk) {
-  var er = null;
-  if (!Buffer.isBuffer(chunk) && typeof chunk !== 'string' && chunk !== null && chunk !== undefined && !state.objectMode) {
-    er = new TypeError('Invalid non-string/buffer chunk');
-  }
-  return er;
-}
-
 function onEofChunk(stream, state) {
   if (state.ended) return;
   if (state.decoder) {
@@ -5983,10 +6182,13 @@ Readable.prototype.pipe = function (dest, pipeOpts) {
   if (state.endEmitted) processNextTick(endFn);else src.once('end', endFn);
 
   dest.on('unpipe', onunpipe);
-  function onunpipe(readable) {
+  function onunpipe(readable, unpipeInfo) {
     debug('onunpipe');
     if (readable === src) {
-      cleanup();
+      if (unpipeInfo && unpipeInfo.hasUnpiped === false) {
+        unpipeInfo.hasUnpiped = true;
+        cleanup();
+      }
     }
   }
 
@@ -6105,6 +6307,7 @@ function pipeOnDrain(src) {
 
 Readable.prototype.unpipe = function (dest) {
   var state = this._readableState;
+  var unpipeInfo = { hasUnpiped: false };
 
   // if we're not piping anywhere, then do nothing.
   if (state.pipesCount === 0) return this;
@@ -6120,7 +6323,7 @@ Readable.prototype.unpipe = function (dest) {
     state.pipes = null;
     state.pipesCount = 0;
     state.flowing = false;
-    if (dest) dest.emit('unpipe', this);
+    if (dest) dest.emit('unpipe', this, unpipeInfo);
     return this;
   }
 
@@ -6135,7 +6338,7 @@ Readable.prototype.unpipe = function (dest) {
     state.flowing = false;
 
     for (var i = 0; i < len; i++) {
-      dests[i].emit('unpipe', this);
+      dests[i].emit('unpipe', this, unpipeInfo);
     }return this;
   }
 
@@ -6147,7 +6350,7 @@ Readable.prototype.unpipe = function (dest) {
   state.pipesCount -= 1;
   if (state.pipesCount === 1) state.pipes = state.pipes[0];
 
-  dest.emit('unpipe', this);
+  dest.emit('unpipe', this, unpipeInfo);
 
   return this;
 };
@@ -6168,7 +6371,7 @@ Readable.prototype.on = function (ev, fn) {
       if (!state.reading) {
         processNextTick(nReadingNextTick, this);
       } else if (state.length) {
-        emitReadable(this, state);
+        emitReadable(this);
       }
     }
   }
@@ -6429,13 +6632,34 @@ function indexOf(xs, x) {
   }
   return -1;
 }
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(2)))
 
 /***/ }),
 /* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 // a transform stream is a readable/writable stream where you do
 // something with the data.  Sometimes it's called a "filter",
 // but that's not a great name for it, since that implies a thing where
@@ -6482,11 +6706,11 @@ function indexOf(xs, x) {
 
 module.exports = Transform;
 
-var Duplex = __webpack_require__(3);
+var Duplex = __webpack_require__(4);
 
 /*<replacement>*/
-var util = __webpack_require__(5);
-util.inherits = __webpack_require__(6);
+var util = __webpack_require__(6);
+util.inherits = __webpack_require__(7);
 /*</replacement>*/
 
 util.inherits(Transform, Duplex);
@@ -6509,7 +6733,9 @@ function afterTransform(stream, er, data) {
 
   var cb = ts.writecb;
 
-  if (!cb) return stream.emit('error', new Error('no writecb in Transform class'));
+  if (!cb) {
+    return stream.emit('error', new Error('write callback called multiple times'));
+  }
 
   ts.writechunk = null;
   ts.writecb = null;
@@ -6602,6 +6828,15 @@ Transform.prototype._read = function (n) {
   }
 };
 
+Transform.prototype._destroy = function (err, cb) {
+  var _this = this;
+
+  Duplex.prototype._destroy.call(this, err, function (err2) {
+    cb(err2);
+    _this.emit('close');
+  });
+};
+
 function done(stream, er, data) {
   if (er) return stream.emit('error', er);
 
@@ -6624,17 +6859,60 @@ function done(stream, er, data) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(process, setImmediate) {// A bit simpler than readable streams.
+/* WEBPACK VAR INJECTION */(function(process, setImmediate, global) {// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// A bit simpler than readable streams.
 // Implement an async ._write(chunk, encoding, cb), and it'll handle all
 // the drain event emission and buffering.
 
 
 
+/*<replacement>*/
+
+var processNextTick = __webpack_require__(15);
+/*</replacement>*/
+
 module.exports = Writable;
 
-/*<replacement>*/
-var processNextTick = __webpack_require__(21);
-/*</replacement>*/
+/* <replacement> */
+function WriteReq(chunk, encoding, cb) {
+  this.chunk = chunk;
+  this.encoding = encoding;
+  this.callback = cb;
+  this.next = null;
+}
+
+// It seems a linked list but it is not
+// there will be only 2 of these for each stream
+function CorkedRequest(state) {
+  var _this = this;
+
+  this.next = null;
+  this.entry = null;
+  this.finish = function () {
+    onCorkedFinish(_this, state);
+  };
+}
+/* </replacement> */
 
 /*<replacement>*/
 var asyncWrite = !process.browser && ['v0.10', 'v0.9.'].indexOf(process.version.slice(0, 5)) > -1 ? setImmediate : processNextTick;
@@ -6647,37 +6925,39 @@ var Duplex;
 Writable.WritableState = WritableState;
 
 /*<replacement>*/
-var util = __webpack_require__(5);
-util.inherits = __webpack_require__(6);
+var util = __webpack_require__(6);
+util.inherits = __webpack_require__(7);
 /*</replacement>*/
 
 /*<replacement>*/
 var internalUtil = {
-  deprecate: __webpack_require__(69)
+  deprecate: __webpack_require__(70)
 };
 /*</replacement>*/
 
 /*<replacement>*/
-var Stream = __webpack_require__(40);
+var Stream = __webpack_require__(41);
 /*</replacement>*/
 
 /*<replacement>*/
 var Buffer = __webpack_require__(22).Buffer;
+var OurUint8Array = global.Uint8Array || function () {};
+function _uint8ArrayToBuffer(chunk) {
+  return Buffer.from(chunk);
+}
+function _isUint8Array(obj) {
+  return Buffer.isBuffer(obj) || obj instanceof OurUint8Array;
+}
 /*</replacement>*/
+
+var destroyImpl = __webpack_require__(40);
 
 util.inherits(Writable, Stream);
 
 function nop() {}
 
-function WriteReq(chunk, encoding, cb) {
-  this.chunk = chunk;
-  this.encoding = encoding;
-  this.callback = cb;
-  this.next = null;
-}
-
 function WritableState(options, stream) {
-  Duplex = Duplex || __webpack_require__(3);
+  Duplex = Duplex || __webpack_require__(4);
 
   options = options || {};
 
@@ -6695,7 +6975,10 @@ function WritableState(options, stream) {
   this.highWaterMark = hwm || hwm === 0 ? hwm : defaultHwm;
 
   // cast to ints.
-  this.highWaterMark = ~~this.highWaterMark;
+  this.highWaterMark = Math.floor(this.highWaterMark);
+
+  // if _final has been called
+  this.finalCalled = false;
 
   // drain event flag.
   this.needDrain = false;
@@ -6705,6 +6988,9 @@ function WritableState(options, stream) {
   this.ended = false;
   // when 'finish' is emitted
   this.finished = false;
+
+  // has it been destroyed
+  this.destroyed = false;
 
   // should we decode strings into buffers before passing to _write?
   // this is here so that some node-core streams can optimize string
@@ -6787,7 +7073,7 @@ WritableState.prototype.getBuffer = function getBuffer() {
     Object.defineProperty(WritableState.prototype, 'buffer', {
       get: internalUtil.deprecate(function () {
         return this.getBuffer();
-      }, '_writableState.buffer is deprecated. Use _writableState.getBuffer ' + 'instead.')
+      }, '_writableState.buffer is deprecated. Use _writableState.getBuffer ' + 'instead.', 'DEP0003')
     });
   } catch (_) {}
 })();
@@ -6811,7 +7097,7 @@ if (typeof Symbol === 'function' && Symbol.hasInstance && typeof Function.protot
 }
 
 function Writable(options) {
-  Duplex = Duplex || __webpack_require__(3);
+  Duplex = Duplex || __webpack_require__(4);
 
   // Writable ctor is applied to Duplexes, too.
   // `realHasInstance` is necessary because using plain `instanceof`
@@ -6833,6 +7119,10 @@ function Writable(options) {
     if (typeof options.write === 'function') this._write = options.write;
 
     if (typeof options.writev === 'function') this._writev = options.writev;
+
+    if (typeof options.destroy === 'function') this._destroy = options.destroy;
+
+    if (typeof options.final === 'function') this._final = options.final;
   }
 
   Stream.call(this);
@@ -6873,7 +7163,11 @@ function validChunk(stream, state, chunk, cb) {
 Writable.prototype.write = function (chunk, encoding, cb) {
   var state = this._writableState;
   var ret = false;
-  var isBuf = Buffer.isBuffer(chunk);
+  var isBuf = _isUint8Array(chunk) && !state.objectMode;
+
+  if (isBuf && !Buffer.isBuffer(chunk)) {
+    chunk = _uint8ArrayToBuffer(chunk);
+  }
 
   if (typeof encoding === 'function') {
     cb = encoding;
@@ -6928,8 +7222,12 @@ function decodeChunk(state, chunk, encoding) {
 // If we return false, then we need a drain event, so set that flag.
 function writeOrBuffer(stream, state, isBuf, chunk, encoding, cb) {
   if (!isBuf) {
-    chunk = decodeChunk(state, chunk, encoding);
-    if (Buffer.isBuffer(chunk)) encoding = 'buffer';
+    var newChunk = decodeChunk(state, chunk, encoding);
+    if (chunk !== newChunk) {
+      isBuf = true;
+      encoding = 'buffer';
+      chunk = newChunk;
+    }
   }
   var len = state.objectMode ? 1 : chunk.length;
 
@@ -6941,7 +7239,13 @@ function writeOrBuffer(stream, state, isBuf, chunk, encoding, cb) {
 
   if (state.writing || state.corked) {
     var last = state.lastBufferedRequest;
-    state.lastBufferedRequest = new WriteReq(chunk, encoding, cb);
+    state.lastBufferedRequest = {
+      chunk: chunk,
+      encoding: encoding,
+      isBuf: isBuf,
+      callback: cb,
+      next: null
+    };
     if (last) {
       last.next = state.lastBufferedRequest;
     } else {
@@ -6966,10 +7270,26 @@ function doWrite(stream, state, writev, len, chunk, encoding, cb) {
 
 function onwriteError(stream, state, sync, er, cb) {
   --state.pendingcb;
-  if (sync) processNextTick(cb, er);else cb(er);
 
-  stream._writableState.errorEmitted = true;
-  stream.emit('error', er);
+  if (sync) {
+    // defer the callback if we are being called synchronously
+    // to avoid piling up things on the stack
+    processNextTick(cb, er);
+    // this can emit finish, and it will always happen
+    // after error
+    processNextTick(finishMaybe, stream, state);
+    stream._writableState.errorEmitted = true;
+    stream.emit('error', er);
+  } else {
+    // the caller expect this to happen before if
+    // it is async
+    cb(er);
+    stream._writableState.errorEmitted = true;
+    stream.emit('error', er);
+    // this can emit finish, but finish must
+    // always follow error
+    finishMaybe(stream, state);
+  }
 }
 
 function onwriteStateUpdate(state) {
@@ -7034,11 +7354,14 @@ function clearBuffer(stream, state) {
     holder.entry = entry;
 
     var count = 0;
+    var allBuffers = true;
     while (entry) {
       buffer[count] = entry;
+      if (!entry.isBuf) allBuffers = false;
       entry = entry.next;
       count += 1;
     }
+    buffer.allBuffers = allBuffers;
 
     doWrite(stream, state, true, state.length, buffer, '', holder.finish);
 
@@ -7112,23 +7435,37 @@ Writable.prototype.end = function (chunk, encoding, cb) {
 function needFinish(state) {
   return state.ending && state.length === 0 && state.bufferedRequest === null && !state.finished && !state.writing;
 }
-
-function prefinish(stream, state) {
-  if (!state.prefinished) {
+function callFinal(stream, state) {
+  stream._final(function (err) {
+    state.pendingcb--;
+    if (err) {
+      stream.emit('error', err);
+    }
     state.prefinished = true;
     stream.emit('prefinish');
+    finishMaybe(stream, state);
+  });
+}
+function prefinish(stream, state) {
+  if (!state.prefinished && !state.finalCalled) {
+    if (typeof stream._final === 'function') {
+      state.pendingcb++;
+      state.finalCalled = true;
+      processNextTick(callFinal, stream, state);
+    } else {
+      state.prefinished = true;
+      stream.emit('prefinish');
+    }
   }
 }
 
 function finishMaybe(stream, state) {
   var need = needFinish(state);
   if (need) {
+    prefinish(stream, state);
     if (state.pendingcb === 0) {
-      prefinish(stream, state);
       state.finished = true;
       stream.emit('finish');
-    } else {
-      prefinish(stream, state);
     }
   }
   return need;
@@ -7144,40 +7481,137 @@ function endWritable(stream, state, cb) {
   stream.writable = false;
 }
 
-// It seems a linked list but it is not
-// there will be only 2 of these for each stream
-function CorkedRequest(state) {
-  var _this = this;
-
-  this.next = null;
-  this.entry = null;
-  this.finish = function (err) {
-    var entry = _this.entry;
-    _this.entry = null;
-    while (entry) {
-      var cb = entry.callback;
-      state.pendingcb--;
-      cb(err);
-      entry = entry.next;
-    }
-    if (state.corkedRequestsFree) {
-      state.corkedRequestsFree.next = _this;
-    } else {
-      state.corkedRequestsFree = _this;
-    }
-  };
+function onCorkedFinish(corkReq, state, err) {
+  var entry = corkReq.entry;
+  corkReq.entry = null;
+  while (entry) {
+    var cb = entry.callback;
+    state.pendingcb--;
+    cb(err);
+    entry = entry.next;
+  }
+  if (state.corkedRequestsFree) {
+    state.corkedRequestsFree.next = corkReq;
+  } else {
+    state.corkedRequestsFree = corkReq;
+  }
 }
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(68).setImmediate))
+
+Object.defineProperty(Writable.prototype, 'destroyed', {
+  get: function () {
+    if (this._writableState === undefined) {
+      return false;
+    }
+    return this._writableState.destroyed;
+  },
+  set: function (value) {
+    // we ignore the value if the stream
+    // has not been initialized yet
+    if (!this._writableState) {
+      return;
+    }
+
+    // backward compatibility, the user is explicitly
+    // managing destroyed
+    this._writableState.destroyed = value;
+  }
+});
+
+Writable.prototype.destroy = destroyImpl.destroy;
+Writable.prototype._undestroy = destroyImpl.undestroy;
+Writable.prototype._destroy = function (err, cb) {
+  this.end();
+  cb(err);
+};
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(69).setImmediate, __webpack_require__(3)))
 
 /***/ }),
 /* 40 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/*<replacement>*/
+
+var processNextTick = __webpack_require__(15);
+/*</replacement>*/
+
+// undocumented cb() API, needed for core, not for public API
+function destroy(err, cb) {
+  var _this = this;
+
+  var readableDestroyed = this._readableState && this._readableState.destroyed;
+  var writableDestroyed = this._writableState && this._writableState.destroyed;
+
+  if (readableDestroyed || writableDestroyed) {
+    if (cb) {
+      cb(err);
+    } else if (err && (!this._writableState || !this._writableState.errorEmitted)) {
+      processNextTick(emitErrorNT, this, err);
+    }
+    return;
+  }
+
+  // we set destroyed to true before firing error callbacks in order
+  // to make it re-entrance safe in case destroy() is called within callbacks
+
+  if (this._readableState) {
+    this._readableState.destroyed = true;
+  }
+
+  // if this is a duplex stream mark the writable part as destroyed as well
+  if (this._writableState) {
+    this._writableState.destroyed = true;
+  }
+
+  this._destroy(err || null, function (err) {
+    if (!cb && err) {
+      processNextTick(emitErrorNT, _this, err);
+      if (_this._writableState) {
+        _this._writableState.errorEmitted = true;
+      }
+    } else if (cb) {
+      cb(err);
+    }
+  });
+}
+
+function undestroy() {
+  if (this._readableState) {
+    this._readableState.destroyed = false;
+    this._readableState.reading = false;
+    this._readableState.ended = false;
+    this._readableState.endEmitted = false;
+  }
+
+  if (this._writableState) {
+    this._writableState.destroyed = false;
+    this._writableState.ended = false;
+    this._writableState.ending = false;
+    this._writableState.finished = false;
+    this._writableState.errorEmitted = false;
+  }
+}
+
+function emitErrorNT(self, err) {
+  self.emit('error', err);
+}
+
+module.exports = {
+  destroy: destroy,
+  undestroy: undestroy
+};
+
+/***/ }),
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(31).EventEmitter;
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -7705,7 +8139,7 @@ function isPrimitive(arg) {
 }
 exports.isPrimitive = isPrimitive;
 
-exports.isBuffer = __webpack_require__(71);
+exports.isBuffer = __webpack_require__(72);
 
 function objectToString(o) {
   return Object.prototype.toString.call(o);
@@ -7749,7 +8183,7 @@ exports.log = function() {
  *     prototype.
  * @param {function} superCtor Constructor function to inherit prototype from.
  */
-exports.inherits = __webpack_require__(70);
+exports.inherits = __webpack_require__(71);
 
 exports._extend = function(origin, add) {
   // Don't do anything if add isn't an object
@@ -7767,21 +8201,21 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7), __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(2)))
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 exports.default = parseDicom;
 
-var _alloc = __webpack_require__(15);
+var _alloc = __webpack_require__(16);
 
 var _alloc2 = _interopRequireDefault(_alloc);
 
@@ -7793,11 +8227,11 @@ var _byteStream = __webpack_require__(9);
 
 var _byteStream2 = _interopRequireDefault(_byteStream);
 
-var _dataSet = __webpack_require__(4);
+var _dataSet = __webpack_require__(5);
 
 var _dataSet2 = _interopRequireDefault(_dataSet);
 
-var _littleEndianByteArrayParser = __webpack_require__(17);
+var _littleEndianByteArrayParser = __webpack_require__(18);
 
 var _littleEndianByteArrayParser2 = _interopRequireDefault(_littleEndianByteArrayParser);
 
@@ -7834,141 +8268,141 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 
 function parseDicom(byteArray, options) {
-  if (byteArray === undefined) {
-    throw 'dicomParser.parseDicom: missing required parameter \'byteArray\'';
-  }
-
-  function readTransferSyntax(metaHeaderDataSet) {
-    if (metaHeaderDataSet.elements.x00020010 === undefined) {
-      throw 'dicomParser.parseDicom: missing required meta header attribute 0002,0010';
+    if (byteArray === undefined) {
+        throw 'dicomParser.parseDicom: missing required parameter \'byteArray\'';
     }
 
-    var transferSyntaxElement = metaHeaderDataSet.elements.x00020010;
-
-    return byteArrayParser.readFixedString(byteArray, transferSyntaxElement.dataOffset, transferSyntaxElement.length);
-  }
-
-  function isExplicit(transferSyntax) {
-    // implicit little endian
-    if (transferSyntax === '1.2.840.10008.1.2') {
-      return false;
-    }
-
-    // all other transfer syntaxes should be explicit
-    return true;
-  }
-
-  function getDataSetByteStream(transferSyntax, position) {
-    if (transferSyntax === '1.2.840.10008.1.2.1.99') {
-      // if an infalter callback is registered, use it
-      if (options && options.inflater) {
-        var fullByteArrayCallback = options.inflater(byteArray, position);
-
-        return new _byteStream2.default(_littleEndianByteArrayParser2.default, fullByteArrayCallback, 0);
-      }
-      // if running on node, use the zlib library to inflate
-      // http://stackoverflow.com/questions/4224606/how-to-check-whether-a-script-is-running-under-node-js
-      else if (typeof module !== 'undefined' && this.module !== module) {
-          // inflate it
-          var zlib = __webpack_require__(54);
-          var deflatedBuffer = (0, _sharedCopy2.default)(byteArray, position, byteArray.length - position);
-          var inflatedBuffer = zlib.inflateRawSync(deflatedBuffer);
-
-          // create a single byte array with the full header bytes and the inflated bytes
-          var fullByteArrayBuffer = (0, _alloc2.default)(byteArray, inflatedBuffer.length + position);
-
-          byteArray.copy(fullByteArrayBuffer, 0, 0, position);
-          inflatedBuffer.copy(fullByteArrayBuffer, position);
-
-          return new _byteStream2.default(_littleEndianByteArrayParser2.default, fullByteArrayBuffer, 0);
+    function readTransferSyntax(metaHeaderDataSet) {
+        if (metaHeaderDataSet.elements.x00020010 === undefined) {
+            throw 'dicomParser.parseDicom: missing required meta header attribute 0002,0010';
         }
-        // if pako is defined - use it.  This is the web browser path
-        // https://github.com/nodeca/pako
-        else if (typeof pako !== 'undefined') {
-            // inflate it
-            var deflated = byteArray.slice(position);
-            var inflated = pako.inflateRaw(deflated);
 
-            // create a single byte array with the full header bytes and the inflated bytes
-            var fullByteArray = (0, _alloc2.default)(byteArray, inflated.length + position);
+        var transferSyntaxElement = metaHeaderDataSet.elements.x00020010;
 
-            fullByteArray.set(byteArray.slice(0, position), 0);
-            fullByteArray.set(inflated, position);
-
-            return new _byteStream2.default(_littleEndianByteArrayParser2.default, fullByteArray, 0);
-          }
-
-      // throw exception since no inflater is available
-      throw 'dicomParser.parseDicom: no inflater available to handle deflate transfer syntax';
+        return byteArrayParser.readFixedString(byteArray, transferSyntaxElement.dataOffset, transferSyntaxElement.length);
     }
 
-    // explicit big endian
-    if (transferSyntax === '1.2.840.10008.1.2.2') {
-      return new _byteStream2.default(_bigEndianByteArrayParser2.default, byteArray, position);
+    function isExplicit(transferSyntax) {
+        // implicit little endian
+        if (transferSyntax === '1.2.840.10008.1.2') {
+            return false;
+        }
+
+        // all other transfer syntaxes should be explicit
+        return true;
     }
 
-    // all other transfer syntaxes are little endian; only the pixel encoding differs
-    // make a new stream so the metaheader warnings don't come along for the ride
-    return new _byteStream2.default(_littleEndianByteArrayParser2.default, byteArray, position);
-  }
+    function getDataSetByteStream(transferSyntax, position) {
+        if (transferSyntax === '1.2.840.10008.1.2.1.99') {
+            // if an infalter callback is registered, use it
+            if (options && options.inflater) {
+                var fullByteArrayCallback = options.inflater(byteArray, position);
 
-  function mergeDataSets(metaHeaderDataSet, instanceDataSet) {
-    for (var propertyName in metaHeaderDataSet.elements) {
-      if (metaHeaderDataSet.elements.hasOwnProperty(propertyName)) {
-        instanceDataSet.elements[propertyName] = metaHeaderDataSet.elements[propertyName];
-      }
+                return new _byteStream2.default(_littleEndianByteArrayParser2.default, fullByteArrayCallback, 0);
+            }
+            // if running on node, use the zlib library to inflate
+            // http://stackoverflow.com/questions/4224606/how-to-check-whether-a-script-is-running-under-node-js
+            else if (typeof module !== 'undefined' && this.module !== module) {
+                    // inflate it
+                    var zlib = __webpack_require__(55);
+                    var deflatedBuffer = (0, _sharedCopy2.default)(byteArray, position, byteArray.length - position);
+                    var inflatedBuffer = zlib.inflateRawSync(deflatedBuffer);
+
+                    // create a single byte array with the full header bytes and the inflated bytes
+                    var fullByteArrayBuffer = (0, _alloc2.default)(byteArray, inflatedBuffer.length + position);
+
+                    byteArray.copy(fullByteArrayBuffer, 0, 0, position);
+                    inflatedBuffer.copy(fullByteArrayBuffer, position);
+
+                    return new _byteStream2.default(_littleEndianByteArrayParser2.default, fullByteArrayBuffer, 0);
+                }
+                // if pako is defined - use it.  This is the web browser path
+                // https://github.com/nodeca/pako
+                else if (typeof pako !== 'undefined') {
+                        // inflate it
+                        var deflated = byteArray.slice(position);
+                        var inflated = pako.inflateRaw(deflated);
+
+                        // create a single byte array with the full header bytes and the inflated bytes
+                        var fullByteArray = (0, _alloc2.default)(byteArray, inflated.length + position);
+
+                        fullByteArray.set(byteArray.slice(0, position), 0);
+                        fullByteArray.set(inflated, position);
+
+                        return new _byteStream2.default(_littleEndianByteArrayParser2.default, fullByteArray, 0);
+                    }
+
+            // throw exception since no inflater is available
+            throw 'dicomParser.parseDicom: no inflater available to handle deflate transfer syntax';
+        }
+
+        // explicit big endian
+        if (transferSyntax === '1.2.840.10008.1.2.2') {
+            return new _byteStream2.default(_bigEndianByteArrayParser2.default, byteArray, position);
+        }
+
+        // all other transfer syntaxes are little endian; only the pixel encoding differs
+        // make a new stream so the metaheader warnings don't come along for the ride
+        return new _byteStream2.default(_littleEndianByteArrayParser2.default, byteArray, position);
     }
 
-    if (metaHeaderDataSet.warnings !== undefined) {
-      instanceDataSet.warnings = metaHeaderDataSet.warnings.concat(instanceDataSet.warnings);
+    function mergeDataSets(metaHeaderDataSet, instanceDataSet) {
+        for (var propertyName in metaHeaderDataSet.elements) {
+            if (metaHeaderDataSet.elements.hasOwnProperty(propertyName)) {
+                instanceDataSet.elements[propertyName] = metaHeaderDataSet.elements[propertyName];
+            }
+        }
+
+        if (metaHeaderDataSet.warnings !== undefined) {
+            instanceDataSet.warnings = metaHeaderDataSet.warnings.concat(instanceDataSet.warnings);
+        }
+
+        return instanceDataSet;
     }
 
-    return instanceDataSet;
-  }
+    function readDataSet(metaHeaderDataSet) {
+        var transferSyntax = readTransferSyntax(metaHeaderDataSet);
+        var explicit = isExplicit(transferSyntax);
+        var dataSetByteStream = getDataSetByteStream(transferSyntax, metaHeaderDataSet.position);
 
-  function readDataSet(metaHeaderDataSet) {
-    var transferSyntax = readTransferSyntax(metaHeaderDataSet);
-    var explicit = isExplicit(transferSyntax);
-    var dataSetByteStream = getDataSetByteStream(transferSyntax, metaHeaderDataSet.position);
+        var elements = {};
+        var dataSet = new _dataSet2.default(dataSetByteStream.byteArrayParser, dataSetByteStream.byteArray, elements);
 
-    var elements = {};
-    var dataSet = new _dataSet2.default(dataSetByteStream.byteArrayParser, dataSetByteStream.byteArray, elements);
+        dataSet.warnings = dataSetByteStream.warnings;
 
-    dataSet.warnings = dataSetByteStream.warnings;
+        try {
+            if (explicit) {
+                parseDicomDataSet.parseDicomDataSetExplicit(dataSet, dataSetByteStream, dataSetByteStream.byteArray.length, options);
+            } else {
+                parseDicomDataSet.parseDicomDataSetImplicit(dataSet, dataSetByteStream, dataSetByteStream.byteArray.length, options);
+            }
+        } catch (e) {
+            var ex = {
+                exception: e,
+                dataSet: dataSet
+            };
 
-    try {
-      if (explicit) {
-        parseDicomDataSet.parseDicomDataSetExplicit(dataSet, dataSetByteStream, dataSetByteStream.byteArray.length, options);
-      } else {
-        parseDicomDataSet.parseDicomDataSetImplicit(dataSet, dataSetByteStream, dataSetByteStream.byteArray.length, options);
-      }
-    } catch (e) {
-      var ex = {
-        exception: e,
-        dataSet: dataSet
-      };
+            throw ex;
+        }
 
-      throw ex;
+        return dataSet;
     }
 
-    return dataSet;
-  }
+    // main function here
+    function parseTheByteStream() {
+        var metaHeaderDataSet = (0, _readPart10Header2.default)(byteArray, options);
+        var dataSet = readDataSet(metaHeaderDataSet);
 
-  // main function here
-  function parseTheByteStream() {
-    var metaHeaderDataSet = (0, _readPart10Header2.default)(byteArray, options);
-    var dataSet = readDataSet(metaHeaderDataSet);
+        return mergeDataSets(metaHeaderDataSet, dataSet);
+    }
 
-    return mergeDataSets(metaHeaderDataSet, dataSet);
-  }
-
-  // This is where we actually start parsing
-  return parseTheByteStream();
+    // This is where we actually start parsing
+    return parseTheByteStream();
 }
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(72)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(73)(module)))
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7983,7 +8417,7 @@ var _readEncapsulatedImageFrame = __webpack_require__(26);
 
 var _readEncapsulatedImageFrame2 = _interopRequireDefault(_readEncapsulatedImageFrame);
 
-var _readEncapsulatedPixelDataFromFragments = __webpack_require__(19);
+var _readEncapsulatedPixelDataFromFragments = __webpack_require__(20);
 
 var _readEncapsulatedPixelDataFromFragments2 = _interopRequireDefault(_readEncapsulatedPixelDataFromFragments);
 
@@ -8055,7 +8489,7 @@ function readEncapsulatedPixelData(dataSet, pixelDataElement, frame) {
 }
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8065,7 +8499,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _util = __webpack_require__(20);
+var _util = __webpack_require__(21);
 
 Object.keys(_util).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
@@ -8077,7 +8511,7 @@ Object.keys(_util).forEach(function (key) {
   });
 });
 
-var _parseTM = __webpack_require__(51);
+var _parseTM = __webpack_require__(52);
 
 Object.defineProperty(exports, 'parseTM', {
   enumerable: true,
@@ -8086,7 +8520,7 @@ Object.defineProperty(exports, 'parseTM', {
   }
 });
 
-var _parseDA = __webpack_require__(50);
+var _parseDA = __webpack_require__(51);
 
 Object.defineProperty(exports, 'parseDA', {
   enumerable: true,
@@ -8104,7 +8538,7 @@ Object.defineProperty(exports, 'explicitElementToString', {
   }
 });
 
-var _dataSetToJS = __webpack_require__(49);
+var _dataSetToJS = __webpack_require__(50);
 
 Object.defineProperty(exports, 'explicitDataSetToJS', {
   enumerable: true,
@@ -8113,7 +8547,7 @@ Object.defineProperty(exports, 'explicitDataSetToJS', {
   }
 });
 
-var _createJPEGBasicOffsetTable = __webpack_require__(48);
+var _createJPEGBasicOffsetTable = __webpack_require__(49);
 
 Object.defineProperty(exports, 'createJPEGBasicOffsetTable', {
   enumerable: true,
@@ -8125,7 +8559,7 @@ Object.defineProperty(exports, 'createJPEGBasicOffsetTable', {
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8137,7 +8571,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = '1.7.5';
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8209,7 +8643,7 @@ function isBuffer(b) {
 // ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-var util = __webpack_require__(41);
+var util = __webpack_require__(42);
 var hasOwn = Object.prototype.hasOwnProperty;
 var pSlice = Array.prototype.slice;
 var functionsHaveNames = (function () {
@@ -8632,10 +9066,10 @@ var objectKeys = Object.keys || function (obj) {
   return keys;
 };
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8645,14 +9079,14 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _util = __webpack_require__(44);
+var _index = __webpack_require__(45);
 
-Object.keys(_util).forEach(function (key) {
+Object.keys(_index).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function get() {
-      return _util[key];
+      return _index[key];
     }
   });
 });
@@ -8681,7 +9115,7 @@ Object.keys(_byteArrayParser).forEach(function (key) {
   });
 });
 
-var _alloc = __webpack_require__(15);
+var _alloc = __webpack_require__(16);
 
 Object.defineProperty(exports, 'alloc', {
   enumerable: true,
@@ -8690,7 +9124,7 @@ Object.defineProperty(exports, 'alloc', {
   }
 });
 
-var _version = __webpack_require__(45);
+var _version = __webpack_require__(46);
 
 Object.defineProperty(exports, 'version', {
   enumerable: true,
@@ -8726,7 +9160,7 @@ Object.defineProperty(exports, 'sharedCopy', {
   }
 });
 
-var _dataSet = __webpack_require__(4);
+var _dataSet = __webpack_require__(5);
 
 Object.defineProperty(exports, 'DataSet', {
   enumerable: true,
@@ -8753,7 +9187,7 @@ Object.defineProperty(exports, 'findEndOfEncapsulatedElement', {
   }
 });
 
-var _findItemDelimitationItem = __webpack_require__(16);
+var _findItemDelimitationItem = __webpack_require__(17);
 
 Object.defineProperty(exports, 'findItemDelimitationItemAndSetElementLength', {
   enumerable: true,
@@ -8762,7 +9196,7 @@ Object.defineProperty(exports, 'findItemDelimitationItemAndSetElementLength', {
   }
 });
 
-var _littleEndianByteArrayParser = __webpack_require__(17);
+var _littleEndianByteArrayParser = __webpack_require__(18);
 
 Object.defineProperty(exports, 'littleEndianByteArrayParser', {
   enumerable: true,
@@ -8771,7 +9205,7 @@ Object.defineProperty(exports, 'littleEndianByteArrayParser', {
   }
 });
 
-var _parseDicom = __webpack_require__(42);
+var _parseDicom = __webpack_require__(43);
 
 Object.defineProperty(exports, 'parseDicom', {
   enumerable: true,
@@ -8789,7 +9223,7 @@ Object.defineProperty(exports, 'readDicomElementExplicit', {
   }
 });
 
-var _readDicomElementImplicit = __webpack_require__(18);
+var _readDicomElementImplicit = __webpack_require__(19);
 
 Object.defineProperty(exports, 'readDicomElementImplicit', {
   enumerable: true,
@@ -8807,7 +9241,7 @@ Object.defineProperty(exports, 'readEncapsulatedImageFrame', {
   }
 });
 
-var _readEncapsulatedPixelData = __webpack_require__(43);
+var _readEncapsulatedPixelData = __webpack_require__(44);
 
 Object.defineProperty(exports, 'readEncapsulatedPixelData', {
   enumerable: true,
@@ -8816,7 +9250,7 @@ Object.defineProperty(exports, 'readEncapsulatedPixelData', {
   }
 });
 
-var _readEncapsulatedPixelDataFromFragments = __webpack_require__(19);
+var _readEncapsulatedPixelDataFromFragments = __webpack_require__(20);
 
 Object.defineProperty(exports, 'readEncapsulatedPixelDataFromFragments', {
   enumerable: true,
@@ -8873,7 +9307,7 @@ Object.defineProperty(exports, 'readTag', {
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8965,7 +9399,7 @@ function createJPEGBasicOffsetTable(dataSet, pixelDataElement, fragments) {
 }
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8980,7 +9414,7 @@ var _elementToString = __webpack_require__(30);
 
 var _elementToString2 = _interopRequireDefault(_elementToString);
 
-var _util = __webpack_require__(20);
+var _util = __webpack_require__(21);
 
 var util = _interopRequireWildcard(_util);
 
@@ -9044,7 +9478,7 @@ function explicitDataSetToJS(dataSet, options) {
 }
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9108,7 +9542,7 @@ function parseDA(date, validate) {
 }
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9156,7 +9590,7 @@ function parseTM(time, validate) {
 }
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9195,22 +9629,22 @@ function placeHoldersCount (b64) {
 
 function byteLength (b64) {
   // base64 is 4/3 + up to two characters of the original data
-  return b64.length * 3 / 4 - placeHoldersCount(b64)
+  return (b64.length * 3 / 4) - placeHoldersCount(b64)
 }
 
 function toByteArray (b64) {
-  var i, j, l, tmp, placeHolders, arr
+  var i, l, tmp, placeHolders, arr
   var len = b64.length
   placeHolders = placeHoldersCount(b64)
 
-  arr = new Arr(len * 3 / 4 - placeHolders)
+  arr = new Arr((len * 3 / 4) - placeHolders)
 
   // if there are placeholders, only get up to the last complete 4 chars
   l = placeHolders > 0 ? len - 4 : len
 
   var L = 0
 
-  for (i = 0, j = 0; i < l; i += 4, j += 3) {
+  for (i = 0; i < l; i += 4) {
     tmp = (revLookup[b64.charCodeAt(i)] << 18) | (revLookup[b64.charCodeAt(i + 1)] << 12) | (revLookup[b64.charCodeAt(i + 2)] << 6) | revLookup[b64.charCodeAt(i + 3)]
     arr[L++] = (tmp >> 16) & 0xFF
     arr[L++] = (tmp >> 8) & 0xFF
@@ -9277,14 +9711,14 @@ function fromByteArray (uint8) {
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process, Buffer) {var msg = __webpack_require__(36);
-var zstream = __webpack_require__(62);
-var zlib_deflate = __webpack_require__(57);
-var zlib_inflate = __webpack_require__(59);
-var constants = __webpack_require__(56);
+var zstream = __webpack_require__(63);
+var zlib_deflate = __webpack_require__(58);
+var zlib_inflate = __webpack_require__(60);
+var constants = __webpack_require__(57);
 
 for (var key in constants) {
   exports[key] = constants[key];
@@ -9520,7 +9954,7 @@ exports.Zlib = Zlib;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(Buffer, process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -9544,11 +9978,11 @@ exports.Zlib = Zlib;
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-var Transform = __webpack_require__(66);
+var Transform = __webpack_require__(67);
 
-var binding = __webpack_require__(53);
-var util = __webpack_require__(41);
-var assert = __webpack_require__(46).ok;
+var binding = __webpack_require__(54);
+var util = __webpack_require__(42);
+var assert = __webpack_require__(47).ok;
 
 // zlib doesn't provide these, so kludge them in following the same
 // const naming scheme zlib uses.
@@ -10137,7 +10571,7 @@ util.inherits(Unzip, Zlib);
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer, __webpack_require__(2)))
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports) {
 
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -10227,7 +10661,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10284,14 +10718,14 @@ module.exports = {
 
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils   = __webpack_require__(14);
-var trees   = __webpack_require__(61);
+var trees   = __webpack_require__(62);
 var adler32 = __webpack_require__(34);
 var crc32   = __webpack_require__(35);
 var msg     = __webpack_require__(36);
@@ -12146,7 +12580,7 @@ exports.deflateTune = deflateTune;
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12479,7 +12913,7 @@ module.exports = function inflate_fast(strm, start) {
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12489,8 +12923,8 @@ module.exports = function inflate_fast(strm, start) {
 var utils         = __webpack_require__(14);
 var adler32       = __webpack_require__(34);
 var crc32         = __webpack_require__(35);
-var inflate_fast  = __webpack_require__(58);
-var inflate_table = __webpack_require__(60);
+var inflate_fast  = __webpack_require__(59);
+var inflate_table = __webpack_require__(61);
 
 var CODES = 0;
 var LENS = 1;
@@ -14024,7 +14458,7 @@ exports.inflateUndermine = inflateUndermine;
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14358,7 +14792,7 @@ module.exports = function inflate_table(type, lens, lens_index, codes, table, ta
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15567,7 +16001,7 @@ exports._tr_align = _tr_align;
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15603,10 +16037,31 @@ module.exports = ZStream;
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 // a passthrough stream.
 // basically just the most minimal sort of Transform stream.
 // Every written chunk gets output as-is.
@@ -15618,8 +16073,8 @@ module.exports = PassThrough;
 var Transform = __webpack_require__(38);
 
 /*<replacement>*/
-var util = __webpack_require__(5);
-util.inherits = __webpack_require__(6);
+var util = __webpack_require__(6);
+util.inherits = __webpack_require__(7);
 /*</replacement>*/
 
 util.inherits(PassThrough, Transform);
@@ -15635,7 +16090,7 @@ PassThrough.prototype._transform = function (chunk, encoding, cb) {
 };
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15643,89 +16098,99 @@ PassThrough.prototype._transform = function (chunk, encoding, cb) {
 
 /*<replacement>*/
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 var Buffer = __webpack_require__(22).Buffer;
 /*</replacement>*/
 
-module.exports = BufferList;
-
-function BufferList() {
-  this.head = null;
-  this.tail = null;
-  this.length = 0;
+function copyBuffer(src, target, offset) {
+  src.copy(target, offset);
 }
 
-BufferList.prototype.push = function (v) {
-  var entry = { data: v, next: null };
-  if (this.length > 0) this.tail.next = entry;else this.head = entry;
-  this.tail = entry;
-  ++this.length;
-};
+module.exports = function () {
+  function BufferList() {
+    _classCallCheck(this, BufferList);
 
-BufferList.prototype.unshift = function (v) {
-  var entry = { data: v, next: this.head };
-  if (this.length === 0) this.tail = entry;
-  this.head = entry;
-  ++this.length;
-};
-
-BufferList.prototype.shift = function () {
-  if (this.length === 0) return;
-  var ret = this.head.data;
-  if (this.length === 1) this.head = this.tail = null;else this.head = this.head.next;
-  --this.length;
-  return ret;
-};
-
-BufferList.prototype.clear = function () {
-  this.head = this.tail = null;
-  this.length = 0;
-};
-
-BufferList.prototype.join = function (s) {
-  if (this.length === 0) return '';
-  var p = this.head;
-  var ret = '' + p.data;
-  while (p = p.next) {
-    ret += s + p.data;
-  }return ret;
-};
-
-BufferList.prototype.concat = function (n) {
-  if (this.length === 0) return Buffer.alloc(0);
-  if (this.length === 1) return this.head.data;
-  var ret = Buffer.allocUnsafe(n >>> 0);
-  var p = this.head;
-  var i = 0;
-  while (p) {
-    p.data.copy(ret, i);
-    i += p.data.length;
-    p = p.next;
+    this.head = null;
+    this.tail = null;
+    this.length = 0;
   }
-  return ret;
-};
+
+  BufferList.prototype.push = function push(v) {
+    var entry = { data: v, next: null };
+    if (this.length > 0) this.tail.next = entry;else this.head = entry;
+    this.tail = entry;
+    ++this.length;
+  };
+
+  BufferList.prototype.unshift = function unshift(v) {
+    var entry = { data: v, next: this.head };
+    if (this.length === 0) this.tail = entry;
+    this.head = entry;
+    ++this.length;
+  };
+
+  BufferList.prototype.shift = function shift() {
+    if (this.length === 0) return;
+    var ret = this.head.data;
+    if (this.length === 1) this.head = this.tail = null;else this.head = this.head.next;
+    --this.length;
+    return ret;
+  };
+
+  BufferList.prototype.clear = function clear() {
+    this.head = this.tail = null;
+    this.length = 0;
+  };
+
+  BufferList.prototype.join = function join(s) {
+    if (this.length === 0) return '';
+    var p = this.head;
+    var ret = '' + p.data;
+    while (p = p.next) {
+      ret += s + p.data;
+    }return ret;
+  };
+
+  BufferList.prototype.concat = function concat(n) {
+    if (this.length === 0) return Buffer.alloc(0);
+    if (this.length === 1) return this.head.data;
+    var ret = Buffer.allocUnsafe(n >>> 0);
+    var p = this.head;
+    var i = 0;
+    while (p) {
+      copyBuffer(p.data, ret, i);
+      i += p.data.length;
+      p = p.next;
+    }
+    return ret;
+  };
+
+  return BufferList;
+}();
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(37);
 exports.Stream = exports;
 exports.Readable = exports;
 exports.Writable = __webpack_require__(39);
-exports.Duplex = __webpack_require__(3);
+exports.Duplex = __webpack_require__(4);
 exports.Transform = __webpack_require__(38);
-exports.PassThrough = __webpack_require__(63);
-
-
-/***/ }),
-/* 66 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(65).Transform
+exports.PassThrough = __webpack_require__(64);
 
 
 /***/ }),
 /* 67 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(66).Transform
+
+
+/***/ }),
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
@@ -15915,10 +16380,10 @@ module.exports = __webpack_require__(65).Transform
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7), __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(2)))
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var apply = Function.prototype.apply;
@@ -15971,13 +16436,13 @@ exports._unrefActive = exports.active = function(item) {
 };
 
 // setimmediate attaches itself to the global object
-__webpack_require__(67);
+__webpack_require__(68);
 exports.setImmediate = setImmediate;
 exports.clearImmediate = clearImmediate;
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {
@@ -16048,10 +16513,10 @@ function config (name) {
   return String(val).toLowerCase() === 'true';
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports) {
 
 if (typeof Object.create === 'function') {
@@ -16080,7 +16545,7 @@ if (typeof Object.create === 'function') {
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports) {
 
 module.exports = function isBuffer(arg) {
@@ -16091,7 +16556,7 @@ module.exports = function isBuffer(arg) {
 }
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -16119,7 +16584,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
